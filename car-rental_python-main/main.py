@@ -286,95 +286,38 @@ def chamar_tela_infocar():
 def chamar_tela_tabela():
     pt17.show()
 
-def chamar_tela_devkwid():
-    pt41.show()
+def chamar_tela_dev_carro(nome_carro, tela):
+    tela.show()
     try:
         cursor = banco.cursor()
         cursor.execute("SELECT * FROM carros")
         resultado = cursor.fetchall()
         for check in resultado:
-            if "Kwid" == check[0]:
-                pt41.nome_cliente.setText(check[1])
-                pt41.diariaspace6.setText(check[3])
-                pt41.data_retirada.setText(check[4])
+            if nome_carro == check[0]:
+                tela.nome_cliente.setText(check[1])
+                tela.diariaspace6.setText(check[3])
+                tela.data_retirada.setText(check[4])
+                break
+    except Exception as e:
+        print(f"Erro ao validar os dados: {e}")
 
-    except:
-        print("Erro ao validar os dados")
+def chamar_tela_devkwid():
+    chamar_tela_dev_carro("Kwid", pt41)
 
 def chamar_tela_devmobi():
-    pt51.show()
-    try:
-        cursor = banco.cursor()
-        cursor.execute("SELECT * FROM carros")
-        resultado = cursor.fetchall()
-        for check in resultado:
-            if "Mobi" == check[0]:
-                pt51.nome_cliente.setText(check[1])
-                pt51.diariaspace6.setText(check[3])
-                pt51.data_retirada.setText(check[4])
-
-    except:
-        print("Erro ao validar os dados")
+    chamar_tela_dev_carro("Mobi", pt51)
 
 def chamar_tela_devargo():
-    pt61.show()
-    try:
-        cursor = banco.cursor()
-        cursor.execute("SELECT * FROM carros")
-        resultado = cursor.fetchall()
-        for check in resultado:
-            if "Argo" == check[0]:
-                pt61.nome_cliente.setText(check[1])
-                pt61.diariaspace6.setText(check[3])
-                pt61.data_retirada.setText(check[4])
-
-    except:
-        print("Erro ao validar os dados")
+    chamar_tela_dev_carro("Argo", pt61)
 
 def chamar_tela_devgol():
-    pt71.show()
-    try:
-        cursor = banco.cursor()
-        cursor.execute("SELECT * FROM carros")
-        resultado = cursor.fetchall()
-        for check in resultado:
-            if "Gol" == check[0]:
-                pt71.nome_cliente.setText(check[1])
-                pt71.diariaspace6.setText(check[3])
-                pt71.data_retirada.setText(check[4])
-
-    except:
-        print("Erro ao validar os dados")
+    chamar_tela_dev_carro("Gol", pt71)
 
 def chamar_tela_devcompass():
-    pt81.show()
-    try:
-        cursor = banco.cursor()
-        cursor.execute("SELECT * FROM carros")
-        resultado = cursor.fetchall()
-        for check in resultado:
-            if "Compass" == check[0]:
-                pt81.nome_cliente.setText(check[1])
-                pt81.diariaspace6.setText(check[3])
-                pt81.data_retirada.setText(check[4])
-
-    except:
-        print("Erro ao validar os dados")
+    chamar_tela_dev_carro("Compass", pt81)
 
 def chamar_tela_devhrv():
-    pt91.show()
-    try:
-        cursor = banco.cursor()
-        cursor.execute("SELECT * FROM carros")
-        resultado = cursor.fetchall()
-        for check in resultado:
-            if "HRV" == check[0]:
-                pt91.nome_cliente.setText(check[1])
-                pt91.diariaspace6.setText(check[3])
-                pt91.data_retirada.setText(check[4])
-
-    except:
-        print("Erro ao validar os dados")
+    chamar_tela_dev_carro("HRV", pt91)
 
 #FUNCOES CADASTRAR
 
