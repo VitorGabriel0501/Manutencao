@@ -923,22 +923,23 @@ def devcompass():
         print("Um erro ocorreu ao atualizar carro")
 
 def devhrv():
-    ocup="0"
+    ocup = "0"
     pt91.close()
     pt92.show()
-    diaria= int(pt91.diariaspace6.text())
-    kmtotal= int(pt91.kmspace.text())
-    total= (diaria*175)+(kmtotal*1.80)+207
+    diaria = int(pt91.diariaspace6.text())
+    kmtotal = int(pt91.kmspace.text())
+    total = (diaria * 175) + (kmtotal * 1.80) + 207
     pt92.total.setText(str(total))
     pt3.hrv.setEnabled(True)
     pt3.devhrv.setEnabled(False)
+
     try:
         cursor = banco.cursor()
-        cursor.execute("UPDATE carros SET ocup=? WHERE nome_carro='Hrv'",(ocup))
+        cursor.execute("UPDATE carros SET ocup=? WHERE nome_carro='Hrv'", (ocup,))
         banco.commit()
 
-    except:
-        print("Um erro ocorreu ao atualizar carro")
+    except Exception as e:
+        print(f"Um erro ocorreu ao atualizar carro: {e}")
 
 
 app = QtWidgets.QApplication([])
