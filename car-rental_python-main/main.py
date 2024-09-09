@@ -329,11 +329,21 @@ def verificar_caracteres_especiais(campo, nome_campo):
             return True
     return False
 
-def limpar_campos():
-    pt13.funci_name_2.setText("")
-    pt13.funci_login_3.setText("")
-    pt13.funci_senha_2.setText("")
-    pt13.funci_senha_3.setText("")
+def limpar_campos_cliente():
+    pt12.clientes_name_2.setText("")
+    pt12.clientes_cnh_2.setText("")
+    pt12.clientes_tel_2.setText("")
+    pt12.clientes_end_2.setText("")
+
+def limpar_campos_funcionario():
+    pt14.funci_name_2.setText("")
+    pt14.funci_name_2.setPlaceholderText("")
+    pt14.funci_login_3.setText("")
+    pt14.funci_login_3.setPlaceholderText("")
+    pt14.funci_senha_2.setText("")
+    pt14.funci_senha_2.setPlaceholderText("")
+    pt14.funci_senha_3.setText("")
+    pt14.funci_senha_3.setPlaceholderText("")
 
 def atualizar_tabela_funcionarios():
     dados_lidos = buscar_dados_funcionarios()
@@ -373,207 +383,86 @@ def cadastrar_funcionario():
     atualizar_tabela_funcionarios()
 
 def cadastrar_cliente():
-
-    caracteres = "!@#$%¨&*()-=+[]"
     nome = pt12.clientes_name_2.text()
     cnh = pt12.clientes_cnh_2.text()
     nasc = pt12.clientes_nasc_2.text()
     end = pt12.clientes_end_2.text()
     tel = pt12.clientes_tel_2.text()
 
-    if nome == '' or cnh == '' or nasc == '' or end == '' or tel == '':
-        QtWidgets.QMessageBox.about(pt1, 'Erro',
-                                    'Por favor preencha todos os campos antes de inserir')
+    if not nome or not cnh or not nasc or not end or not tel:
+        QtWidgets.QMessageBox.about(pt1, 'Erro', 'Por favor preencha todos os campos antes de inserir')
         return
 
-    for j in caracteres:
-        if j in nome:
-            QtWidgets.QMessageBox.about(pt1, 'Erro',
-                                        'Por favor não use caractéres especiais para registrar o nome!')
-            return
-
-    for j in caracteres:
-        if j in cnh:
-            QtWidgets.QMessageBox.about(pt1, 'Erro',
-                                        'Por favor não use caractéres especiais para registrar o número da CNH!')
-            return
-
-    for j in caracteres:
-        if j in nasc:
-            QtWidgets.QMessageBox.about(pt1, 'Erro',
-                                        'Por favor não use caractéres especiais para registrar a data de nascimento!')
-            return
-
-    for j in caracteres:
-        if j in tel:
-            QtWidgets.QMessageBox.about(pt1, 'Erro',
-                                        'Por favor não use caractéres especiais para registrar o telefone!')
-            return
+    if any(verificar_caracteres_especiais(campo, nome_campo) for campo, nome_campo in [
+        (nome, 'nome'), (cnh, 'CNH'), (nasc, 'data de nascimento'), (tel, 'telefone')]):
+        return
 
     try:
         cursor = banco.cursor()
-        cursor.execute(("INSERT INTO cliente(nome_cliente,cnh_cliente,nasc_cliente,end_cliente,tel_cliente) VALUES ('" + nome + "','" + cnh + "','" + nasc + "','" + end + "','" + tel + "')"))
+        cursor.execute(f"INSERT INTO cliente(nome_cliente, cnh_cliente, nasc_cliente, end_cliente, tel_cliente) VALUES ('{nome}', '{cnh}', '{nasc}', '{end}', '{tel}')")
         banco.commit()
         pt12.label_info.setText("Usuário cadastrado com sucesso")
-        pt12.clientes_name_2.setText("")
-        pt12.clientes_cnh_2.setText("")
-        #pt12.clientes_nasc_2.setText("01/01/2000")
-        pt12.clientes_tel_2.setText("")
-        pt12.clientes_end_2.setText("")
+        limpar_campos_cliente()
     except:
-        print("Erro ao inserir os dados: ")
-    cursor = banco.cursor()
-    cursor.execute("SELECT nome_cliente,cnh_cliente,nasc_cliente,end_cliente,tel_cliente FROM cliente")
-    dados_lidos = cursor.fetchall()
-    pt10.tabelacliente.setRowCount(len(dados_lidos))
-
-    for i in range(0, len(dados_lidos)):
-        for j in range(0, 5):
-            pt10.tabelacliente.setItem(i, j, QtWidgets.QTableWidgetItem(str(dados_lidos[i][j])))
-
+        print("Erro ao inserir os dados")
+        
 #FUNCOES EDITAR
 def editar_cliente():
-    caracteres = "!@#$%¨&*()-=+[]"
-
     nome = pt15.clientes_name_2.placeholderText()
     cnh = pt15.clientes_cnh_2.placeholderText()
+    nasc = pt15.clientes_nasc_2.placeholderText()
     end = pt15.clientes_end_2.placeholderText()
     tel = pt15.clientes_tel_2.placeholderText()
 
-    nome_novo = pt15.clientes_name_2.text()
-    cnh_novo = pt15.clientes_cnh_2.text()
-    nasc_novo = pt15.clientes_nasc_2.text()
-    end_novo = pt15.clientes_end_2.text()
-    tel_novo = pt15.clientes_tel_2.text()
+    nome_novo = pt15.clientes_name_2.text() or nome
+    cnh_novo = pt15.clientes_cnh_2.text() or cnh
+    nasc_novo = pt15.clientes_nasc_2.text() or nasc
+    end_novo = pt15.clientes_end_2.text() or end
+    tel_novo = pt15.clientes_tel_2.text() or tel
 
-    if nome_novo == '':
-        nome_novo = nome
-    if cnh_novo == '':
-        cnh_novo = cnh
-    if nasc_novo == '':
-        nasc_novo = "01/01/2000"
-    if end_novo == '':
-        end_novo = end
-    if tel_novo == '':
-        tel_novo = tel
+    if any(verificar_caracteres_especiais(campo, nome_campo) for campo, nome_campo in [
+        (nome_novo, 'nome'), (cnh_novo, 'CNH'), (nasc_novo, 'data de nascimento'), (tel_novo, 'telefone')]):
+        return
 
-    for j in caracteres:
-        if j in nome_novo:
-            QtWidgets.QMessageBox.about(pt1, 'Erro',
-                                        'Por favor não use caractéres especiais para registrar o nome!')
-            return
-
-    for j in caracteres:
-        if j in cnh_novo:
-            QtWidgets.QMessageBox.about(pt1, 'Erro',
-                                        'Por favor não use caractéres especiais para registrar a CNH!')
-            return
-
-    for j in caracteres:
-        if j in nasc_novo:
-            QtWidgets.QMessageBox.about(pt1, 'Erro',
-                                        'Por favor não use caractéres especiais para registrar a data de nascimento!')
-            return
-
-    for j in caracteres:
-        if j in tel_novo:
-            QtWidgets.QMessageBox.about(pt1, 'Erro',
-                                        'Por favor não use caractéres especiais para registrar o telefone!')
-            return
     try:
         cursor = banco.cursor()
         cursor.execute("UPDATE cliente SET nome_cliente=?, cnh_cliente=?, nasc_cliente=?, end_cliente=?, tel_cliente=? WHERE nome_cliente=? AND cnh_cliente=? AND end_cliente=? AND tel_cliente=?",
-        (nome_novo, cnh_novo, nasc_novo, end_novo, tel_novo, nome, cnh, end, tel,))
+                       (nome_novo, cnh_novo, nasc_novo, end_novo, tel_novo, nome, cnh, end, tel))
         banco.commit()
         pt15.label.setText("Usuário atualizado com sucesso")
-        pt15.clientes_name_2.setText("")
-        pt15.clientes_name_2.setPlaceholderText("")
-        pt15.clientes_cnh_2.setText("")
-        pt15.clientes_cnh_2.setPlaceholderText("")
-        #pt15.clientes_nasc_2.setText("01/01/2000")
-        pt15.clientes_end_2.setText("")
-        pt15.clientes_end_2.setPlaceholderText("")
-        pt15.clientes_tel_2.setText("")
-        pt15.clientes_tel_2.setPlaceholderText("")
+        limpar_campos_cliente()
     except:
-        print("Erro ao inserir os dados: ")
+        print("Erro ao inserir os dados")
 
 def editar_funcionario():
-    caracteres = "!@#$%¨&*()-=+[]"
-
     nome = pt14.funci_name_2.placeholderText()
     login = pt14.funci_login_3.placeholderText()
     senha = pt14.funci_senha_2.placeholderText()
     senha2 = pt14.funci_senha_3.placeholderText()
 
-    if pt14.radio_gestor.isChecked():
-        cargo = "Gestor"
-    else:
-        cargo = tipo_padrao
+    nome_novo = pt14.funci_name_2.text() or nome
+    login_novo = pt14.funci_login_3.text() or login
+    senha_novo = pt14.funci_senha_2.text() or senha
+    senha2_novo = pt14.funci_senha_3.text() or senha2
 
-    nome_novo = pt14.funci_name_2.text()
-    login_novo = pt14.funci_login_3.text()
-    senha_novo = pt14.funci_senha_2.text()
-    senha2_novo = pt14.funci_senha_3.text()
+    if any(verificar_caracteres_especiais(campo, nome_campo) for campo, nome_campo in [
+        (nome_novo, 'nome'), (login_novo, 'login'), (senha_novo, 'senha'), (senha2_novo, 'confirmação de senha')]):
+        return
 
-    if nome_novo == '':
-        nome_novo = nome
-    if login_novo == '':
-        login_novo = login
-    if senha_novo == '':
-        senha_novo = senha
-    if senha2_novo == '':
-        senha2_novo = senha2
+    cargo = "Gestor" if pt14.radio_gestor.isChecked() else tipo_padrao
 
-    for j in caracteres:
-        if j in nome_novo:
-            QtWidgets.QMessageBox.about(pt1, 'Erro',
-                                        'Por favor não use caractéres especiais para registrar o nome!')
-            return
-
-    for j in caracteres:
-        if j in login_novo:
-            QtWidgets.QMessageBox.about(pt1, 'Erro',
-                                        'Por favor não use caractéres especiais para registrar o login!')
-            return
-
-    for j in caracteres:
-        if j in senha_novo:
-            QtWidgets.QMessageBox.about(pt1, 'Erro',
-                                        'Por favor não use caractéres especiais para registrar a senha!')
-            return
-
-    for j in caracteres:
-        if j in senha2_novo:
-            QtWidgets.QMessageBox.about(pt1, 'Erro',
-                                        'Por favor não use caractéres especiais para confirmar a senha!')
-            return
-
-    if pt14.radio_gestor.isChecked():
-        opcao="Gestor"
-    else:
-        opcao=tipo_padrao
-
-    if(senha_novo==senha2_novo):
+    if senha_novo == senha2_novo:
         try:
             cursor = banco.cursor()
             cursor.execute("UPDATE funcionarios SET nome_funcio=?, login_funcio=?, cargo_funcio=?, senha_funcio=? WHERE nome_funcio=? AND login_funcio=? AND cargo_funcio=? AND senha_funcio=?", 
-            (nome_novo, login_novo, opcao, senha_novo, nome, login, cargo, senha,))
+                           (nome_novo, login_novo, cargo, senha_novo, nome, login, cargo, senha))
             banco.commit()
             pt14.label.setText("Funcionário atualizado com sucesso")
-            pt14.funci_name_2.setText("")
-            pt14.funci_name_2.setPlaceholderText("")
-            pt14.funci_login_3.setText("")
-            pt14.funci_login_3.setPlaceholderText("")
-            pt14.funci_senha_2.setText("")
-            pt14.funci_senha_2.setPlaceholderText("")
-            pt14.funci_senha_3.setText("")
-            pt14.funci_senha_3.setPlaceholderText("")
+            limpar_campos_funcionario()
         except:
-            print("Erro ao inserir os dados: ")
+            print("Erro ao inserir os dados")
     else:
         pt14.label.setText("As duas senhas não coincidem")
-    
     
 #FUNCOES EXCLUIR
 def excluir_funcionario():
@@ -593,7 +482,6 @@ def excluir_funcionario():
         print("Funcionário deletado")
     except:
         print("Um erro ocorreu ao deletar o funcionário")
-
 
 def excluir_cliente():
     try:
