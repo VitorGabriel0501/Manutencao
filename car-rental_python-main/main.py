@@ -5,74 +5,64 @@ import sqlite3
 banco = sqlite3.connect('banco.db')
 
 
-#FUNCAO LOGIN
+def exibir_erro_login(mensagem):
+    QtWidgets.QMessageBox.about(pt1, 'Erro', mensagem)
+
+def validar_campos(login, senha):
+    if not login or not senha:
+        exibir_erro_login('Por favor, preencha todos os campos para logar')
+        return False
+    return True
+
+def verificar_dados_login(cursor, login, senha):
+    cursor.execute("SELECT * FROM funcionarios WHERE login = %s AND senha = %s", (login, senha))
+    return cursor.fetchone()
+
+def atualizar_status_carros(cursor):
+    cursor.execute("SELECT nome_carro, ocup FROM carros")
+    result = cursor.fetchall()
+
+    carros_status = {
+        "Kwid": (pt3.kwid, pt3.devkwid),
+        "Mobi": (pt3.mobi, pt3.devmobi),
+        "Argo": (pt3.argo, pt3.devargo),
+        "Gol": (pt3.gol, pt3.devgol),
+        "Compass": (pt3.compass, pt3.devcompass),
+        "Hrv": (pt3.hrv, pt3.devhrv)
+    }
+
+    for nome_carro, ocup in result:
+        if nome_carro in carros_status:
+            carro, devcarro = carros_status[nome_carro]
+            carro.setEnabled(ocup != "1")
+            devcarro.setEnabled(ocup == "1")
+
+def tratar_tipo_usuario(tipo_usuario):
+    pt1.close()
+    pt2.show()
+    pt2.funcionario.setEnabled(tipo_usuario != "Padrão")
+    print("padrão" if tipo_usuario == "Padrão" else "gestor")
+
 def logar():
     login = pt1.loginspace.text()
     senha = pt1.pinspace.text()
-    if login == '' or senha == '':
-        QtWidgets.QMessageBox.about(pt1, 'Erro',
-                                    'Por favor preencha todos os campos para logar')
+
+    if not validar_campos(login, senha):
         return
+
     try:
         cursor = banco.cursor()
-        cursor.execute("SELECT * FROM funcionarios")
-        resultado = cursor.fetchall()
-        for check in resultado:
-            if login == check[2]:
-                if senha == check[4]:
-                    try:
-                        cursor = banco.cursor()
-                        cursor.execute("SELECT  nome_carro,ocup FROM carros")
-                        banco.commit()
-                        result = cursor.fetchall()
-                        for checkk in result:
-                            if "Kwid" == checkk[0]:
-                                if "1" == checkk[1]:
-                                    pt3.kwid.setEnabled(False)
-                                    pt3.devkwid.setEnabled(True)
-                            if "Mobi" == checkk[0]:
-                                if "1" == checkk[1]:
-                                    pt3.mobi.setEnabled(False)
-                                    pt3.devmobi.setEnabled(True)
-                            if "Argo" == checkk[0]:
-                                if "1" == checkk[1]:
-                                    pt3.argo.setEnabled(False)
-                                    pt3.devargo.setEnabled(True)
-                            if "Gol" == checkk[0]:
-                                if "1" == checkk[1]:
-                                    pt3.gol.setEnabled(False)
-                                    pt3.devgol.setEnabled(True)
-                            if "Compass" == checkk[0]:
-                                if "1" == checkk[1]:
-                                    pt3.compass.setEnabled(False)
-                                    pt3.devcompass.setEnabled(True)
-                            if "Hrv" == checkk[0]:
-                                if "1" == checkk[1]:
-                                    pt3.hrv.setEnabled(False)
-                                    pt3.devhrv.setEnabled(True)
-                    except:
-                        print("Um erro ocorreu ao atualizar o carro")
-                    if "Padrão" == check[3]:
-                        pt1.close()
-                        pt2.show()
-                        pt2.funcionario.setEnabled(False)
-                        print("padrão")
-                    else:
-                        pt1.close()
-                        pt2.show()
-                        pt2.funcionario.setEnabled(True)
-                        print("gestor")
-                else:
-                    pt1.infoname.setText("Dados incorretos")
-                    pt1.pinspace.setText("")
-                    pt1.loginspace.setText("")
-            else:
-                pt1.infoname.setText("Dados incorretos")
-                pt1.pinspace.setText("")
-                pt1.loginspace.setText("")
-    except:
-        print("Erro ao validar os dados")
+        usuario = verificar_dados_login(cursor, login, senha)
 
+        if usuario:
+            atualizar_status_carros(cursor)
+            tratar_tipo_usuario(usuario[3])
+        else:
+            pt1.infoname.setText("Dados incorretos")
+            pt1.pinspace.setText("")
+            pt1.loginspace.setText("")
+    except Exception as e:
+        print(f"Erro ao validar os dados: {e}")
 
 
 #FUNCOES LOGOUT
