@@ -146,13 +146,18 @@ def logout13():
     pt13.label_info.setText("")
     pt13.close()
 
+def buscar_dados_funcionarios():
+    query = "SELECT nome_funcio, cargo_funcio, login_funcio, senha_funcio FROM funcionarios"
+    cursor = banco.cursor()
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
 def logout14():
     pt14.label.setText("")
     pt14.close()
     pt11.show()
-    cursor = banco.cursor()
-    cursor.execute("SELECT nome_funcio,cargo_funcio,login_funcio,senha_funcio FROM funcionarios")
-    dados_lidos = cursor.fetchall()
+    dados_lidos = buscar_dados_funcionarios()
     pt11.tabela_funcio.setRowCount(len(dados_lidos))
 
     for i in range(0, len(dados_lidos)):
@@ -223,9 +228,7 @@ def chamar_tela_cliente():
 def chamar_tela_funcio():
     pt2.close()
     pt11.show()
-    cursor = banco.cursor()
-    cursor.execute("SELECT nome_funcio,cargo_funcio,login_funcio,senha_funcio FROM funcionarios")
-    dados_lidos = cursor.fetchall()
+    dados_lidos = buscar_dados_funcionarios()
     pt11.tabela_funcio.setRowCount(len(dados_lidos))
 
     for i in range(0, len(dados_lidos)):
@@ -441,9 +444,7 @@ def cadastrar_funcionario():
             print("Erro ao inserir os dados: ")
     else:
         pt13.label_info.setText("As duas senhas não coincidem")
-    cursor = banco.cursor()
-    cursor.execute("SELECT nome_funcio,cargo_funcio,login_funcio,senha_funcio FROM funcionarios")
-    dados_lidos = cursor.fetchall()
+    dados_lidos = buscar_dados_funcionarios()
     pt11.tabela_funcio.setRowCount(len(dados_lidos))
 
     for i in range(0, len(dados_lidos)):
