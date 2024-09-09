@@ -321,70 +321,56 @@ def chamar_tela_devhrv():
 
 #FUNCOES CADASTRAR
 
-def cadastrar_funcionario():
-
+def verificar_caracteres_especiais(campo, nome_campo):
     caracteres = "!@#$%¨&*()-=+[]"
+    for j in caracteres:
+        if j in campo:
+            QtWidgets.QMessageBox.about(pt1, 'Erro', f'Por favor não use caracteres especiais para registrar {nome_campo}!')
+            return True
+    return False
+
+def limpar_campos():
+    pt13.funci_name_2.setText("")
+    pt13.funci_login_3.setText("")
+    pt13.funci_senha_2.setText("")
+    pt13.funci_senha_3.setText("")
+
+def atualizar_tabela_funcionarios():
+    dados_lidos = buscar_dados_funcionarios()
+    pt11.tabela_funcio.setRowCount(len(dados_lidos))
+    for i in range(len(dados_lidos)):
+        for j in range(4):
+            pt11.tabela_funcio.setItem(i, j, QtWidgets.QTableWidgetItem(str(dados_lidos[i][j])))
+
+def cadastrar_funcionario():
     nome = pt13.funci_name_2.text()
     login = pt13.funci_login_3.text()
     senha = pt13.funci_senha_2.text()
     senha2 = pt13.funci_senha_3.text()
 
-    if nome == '' or login == '' or senha == '' or senha2 == '':
-        QtWidgets.QMessageBox.about(pt1, 'Erro',
-                                    'Por favor preencha todos os campos antes de inserir')
+    if not nome or not login or not senha or not senha2:
+        QtWidgets.QMessageBox.about(pt1, 'Erro', 'Por favor preencha todos os campos antes de inserir')
         return
 
-    for j in caracteres:
-        if j in nome:
-            QtWidgets.QMessageBox.about(pt1, 'Erro',
-                                        'Por favor não use caractéres especiais para registrar o nome!')
-            return
+    if verificar_caracteres_especiais(nome, 'nome') or verificar_caracteres_especiais(login, 'login') or \
+       verificar_caracteres_especiais(senha, 'senha') or verificar_caracteres_especiais(senha2, 'confirmação de senha'):
+        return
 
-    for j in caracteres:
-        if j in login:
-            QtWidgets.QMessageBox.about(pt1, 'Erro',
-                                        'Por favor não use caractéres especiais para registrar o login!')
-            return
+    opcao = "Gestor" if pt13.radio_gestor.isChecked() else tipo_padrao
 
-    for j in caracteres:
-        if j in senha:
-            QtWidgets.QMessageBox.about(pt1, 'Erro',
-                                        'Por favor não use caractéres especiais para registrar a senha!')
-            return
-
-    for j in caracteres:
-        if j in senha2:
-            QtWidgets.QMessageBox.about(pt1, 'Erro',
-                                        'Por favor não use caractéres especiais para confirmar a senha!')
-            return
-
-
-    if pt13.radio_gestor.isChecked():
-        opcao="Gestor"
-    else:
-        opcao=tipo_padrao
-
-    if(senha==senha2):
+    if senha == senha2:
         try:
             cursor = banco.cursor()
-            cursor.execute(("INSERT INTO funcionarios(nome_funcio,login_funcio,cargo_funcio,senha_funcio) VALUES ('" + nome + "','" + login + "','" + opcao + "','" + senha + "')"))
+            cursor.execute(f"INSERT INTO funcionarios(nome_funcio, login_funcio, cargo_funcio, senha_funcio) VALUES ('{nome}', '{login}', '{opcao}', '{senha}')")
             banco.commit()
             pt13.label_info.setText("Usuário cadastrado com sucesso")
-            pt13.funci_name_2.setText("")
-            pt13.funci_login_3.setText("")
-            pt13.funci_senha_2.setText("")
-            pt13.funci_senha_3.setText("")
-        except:
-            print("Erro ao inserir os dados: ")
+            limpar_campos()
+        except Exception as e:
+            print(f"Erro ao inserir os dados: {e}")
     else:
         pt13.label_info.setText("As duas senhas não coincidem")
-    dados_lidos = buscar_dados_funcionarios()
-    pt11.tabela_funcio.setRowCount(len(dados_lidos))
 
-    for i in range(0, len(dados_lidos)):
-        for j in range(0, 4):
-            pt11.tabela_funcio.setItem(i, j, QtWidgets.QTableWidgetItem(str(dados_lidos[i][j])))
-
+    atualizar_tabela_funcionarios()
 
 def cadastrar_cliente():
 
