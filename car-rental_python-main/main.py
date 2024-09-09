@@ -164,18 +164,23 @@ def logout14():
         for j in range(0, 4):
             pt11.tabela_funcio.setItem(i, j, QtWidgets.QTableWidgetItem(str(dados_lidos[i][j])))
 
+def buscar_dados_cliente():
+    cursor = banco.cursor()
+    cursor.execute("SELECT nome_cliente, cnh_cliente, nasc_cliente, end_cliente, tel_cliente FROM cliente")
+    return cursor.fetchall()
+
+def preencher_tabela_cliente(tabela, dados_lidos):
+    tabela.setRowCount(len(dados_lidos))
+    for i in range(len(dados_lidos)):
+        for j in range(5):
+            tabela.setItem(i, j, QtWidgets.QTableWidgetItem(str(dados_lidos[i][j])))
+
 def logout15():
     pt15.label.setText("")
     pt15.close()
     pt10.show()
-    cursor = banco.cursor()
-    cursor.execute("SELECT nome_cliente,cnh_cliente,nasc_cliente,end_cliente,tel_cliente FROM cliente")
-    dados_lidos = cursor.fetchall()
-    pt10.tabelacliente.setRowCount(len(dados_lidos))
-
-    for i in range(0, len(dados_lidos)):
-        for j in range(0, 5):
-            pt10.tabelacliente.setItem(i, j, QtWidgets.QTableWidgetItem(str(dados_lidos[i][j])))
+    dados_lidos = buscar_dados_cliente()
+    preencher_tabela_cliente(pt10.tabelacliente, dados_lidos)
 
 def logout16():
     pt16.close()
@@ -215,15 +220,8 @@ def chamar_tela_hrv():
 def chamar_tela_cliente():
     pt2.close()
     pt10.show()
-    cursor = banco.cursor()
-    cursor.execute("SELECT nome_cliente,cnh_cliente,nasc_cliente,end_cliente,tel_cliente FROM cliente")
-    dados_lidos = cursor.fetchall()
-    pt10.tabelacliente.setRowCount(len(dados_lidos))
-
-    for i in range(0, len(dados_lidos)):
-        for j in range(0, 5):
-            pt10.tabelacliente.setItem(i, j, QtWidgets.QTableWidgetItem(str(dados_lidos[i][j])))
-
+    dados_lidos = buscar_dados_cliente()
+    preencher_tabela_cliente(pt10.tabelacliente, dados_lidos)
 
 def chamar_tela_funcio():
     pt2.close()
@@ -259,15 +257,8 @@ def chamar_tela_cadastrar_funcio():
 
 def chamar_tela_clienteselect():
     pt101.show()
-    cursor = banco.cursor()
-    cursor.execute("SELECT nome_cliente,cnh_cliente,nasc_cliente,end_cliente,tel_cliente FROM cliente")
-    dados_lidos = cursor.fetchall()
-    pt101.tabelacliente.setRowCount(len(dados_lidos))
-
-    for i in range(0, len(dados_lidos)):
-        for j in range(0, 5):
-            pt101.tabelacliente.setItem(i, j, QtWidgets.QTableWidgetItem(str(dados_lidos[i][j])))
-
+    dados_lidos = buscar_dados_cliente()
+    preencher_tabela_cliente(pt10.tabelacliente, dados_lidos)
 
 def chamar_tela_editar_funcio():
     row = pt11.tabela_funcio.currentRow()
