@@ -41,7 +41,7 @@ def tratar_tipo_usuario(tipo_usuario):
     pt1.close()
     pt2.show()
     pt2.funcionario.setEnabled(tipo_usuario != "Padrão")
-    print("padrão" if tipo_usuario == "Padrão" else "gestor")
+    print("Padrão" if tipo_usuario == "Padrão" else "gestor")
 
 def logar():
     login = pt1.loginspace.text()
@@ -681,10 +681,6 @@ def excluir_cliente():
         
         nome = pt10.tabelacliente.item(row, 0).text()
         cnh = pt10.tabelacliente.item(row, 1).text()
-        #nasc = pt10.tabelacliente.item(row, 2).text()
-        #end = pt10.tabelacliente.item(row, 4).text()
-        #tel = pt10.tabelacliente.item(row, 3).text()
-
         cursor = banco.cursor()
         cursor.execute("DELETE FROM cliente WHERE nome_cliente = ? AND cnh_cliente = ? ", (nome, cnh))
         banco.commit()
