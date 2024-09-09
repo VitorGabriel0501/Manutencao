@@ -236,7 +236,6 @@ def chamar_tela_editar_cliente():
     row = pt10.tabelacliente.currentRow()
     nome = pt10.tabelacliente.item(row, 0).text()
     cnh = pt10.tabelacliente.item(row, 1).text()
-    nasc = pt10.tabelacliente.item(row, 2).text()
     end = pt10.tabelacliente.item(row, 3).text()
     tel = pt10.tabelacliente.item(row, 4).text()
     
