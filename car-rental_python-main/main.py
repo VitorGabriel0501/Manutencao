@@ -403,8 +403,10 @@ def cadastrar_cliente():
         banco.commit()
         pt12.label_info.setText("Usuário cadastrado com sucesso")
         limpar_campos_cliente()
-    except:
-        print("Erro ao inserir os dados")
+    except sqlite3.Error as e:  # Captura erros do banco de dados
+        QtWidgets.QMessageBox.about(pt1, 'Erro', f"Erro ao inserir os dados no banco de dados: {str(e)}")
+    except Exception as e:  # Captura qualquer outro erro
+        QtWidgets.QMessageBox.about(pt1, 'Erro', f"Ocorreu um erro inesperado: {str(e)}")
         
 #FUNCOES EDITAR
 def editar_cliente():
