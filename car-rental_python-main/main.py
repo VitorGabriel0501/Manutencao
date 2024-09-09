@@ -3,7 +3,7 @@ import sqlite3
 
 
 banco = sqlite3.connect('banco.db')
-
+tipo_padrao = ("Padrão")
 
 def exibir_erro_login(mensagem):
     QtWidgets.QMessageBox.about(pt1, 'Erro', mensagem)
@@ -40,8 +40,8 @@ def atualizar_status_carros(cursor):
 def tratar_tipo_usuario(tipo_usuario):
     pt1.close()
     pt2.show()
-    pt2.funcionario.setEnabled(tipo_usuario != "Padrão")
-    print("Padrão" if tipo_usuario == "Padrão" else "gestor")
+    pt2.funcionario.setEnabled(tipo_usuario != tipo_padrao)
+    print(tipo_padrao if tipo_usuario == tipo_padrao else "gestor")
 
 def logar():
     login = pt1.loginspace.text()
@@ -428,7 +428,7 @@ def cadastrar_funcionario():
     if pt13.radio_gestor.isChecked():
         opcao="Gestor"
     else:
-        opcao="Padrão"
+        opcao=tipo_padrao
 
     if(senha==senha2):
         try:
@@ -589,7 +589,7 @@ def editar_funcionario():
     if pt14.radio_gestor.isChecked():
         cargo = "Gestor"
     else:
-        cargo = "Padrão"
+        cargo = tipo_padrao
 
     nome_novo = pt14.funci_name_2.text()
     login_novo = pt14.funci_login_3.text()
@@ -632,7 +632,7 @@ def editar_funcionario():
     if pt14.radio_gestor.isChecked():
         opcao="Gestor"
     else:
-        opcao="Padrão"
+        opcao=tipo_padrao
 
     if(senha_novo==senha2_novo):
         try:
