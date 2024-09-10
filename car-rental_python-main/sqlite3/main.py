@@ -342,73 +342,55 @@ def cadastrar_cliente():
         for j in range(0, 5):
             pt10.tabelacliente.setItem(i, j, QtWidgets.QTableWidgetItem(str(dados_lidos[i][j])))
 
-#FUNCOES EDITAR
 def editar_cliente():
     caracteres = "!@#$%¨&*()-=+[]"
+    
+    # Coleta os valores antigos e novos
+    campos = {
+        "nome": pt15.clientes_name_2,
+        "cnh": pt15.clientes_cnh_2,
+        "tel": pt15.clientes_tel_2,
+        "end": pt15.clientes_end_2,
+        "nasc": pt15.clientes_nasc_2
+    }
+    
+    valores_antigos = {k: v.placeholderText() for k, v in campos.items()}
+    valores_novos = {k: v.text() if v.text() else valores_antigos[k] for k, v in campos.items()}
+    
+    # Valor padrão para nascimento
+    if not valores_novos["nasc"]:
+        valores_novos["nasc"] = "01/01/2000"
 
-    nome = pt15.clientes_name_2.placeholderText()
-    cnh = pt15.clientes_cnh_2.placeholderText()
-    tel = pt15.clientes_tel_2.placeholderText()
-    end = pt15.clientes_end_2.placeholderText()
-
-    nome_novo = pt15.clientes_name_2.text()
-    cnh_novo = pt15.clientes_cnh_2.text()
-    nasc_novo = pt15.clientes_nasc_2.text()
-    tel_novo = pt15.clientes_tel_2.text()
-    end_novo = pt15.clientes_end_2.text()
-
-    if nome_novo == '':
-        nome_novo = nome
-    if cnh_novo == '':
-        cnh_novo = cnh
-    if nasc_novo == '':
-        nasc_novo = "01/01/2000"
-    if tel_novo == '':
-        tel_novo = tel
-    if end_novo == '':
-        end_novo = end
-
-    for j in caracteres:
-        if j in nome_novo:
-            QtWidgets.QMessageBox.about(pt1, 'Erro',
-                                        'Por favor não use caractéres especiais para registrar o nome!')
-            return
-
-    for j in caracteres:
-        if j in cnh_novo:
-            QtWidgets.QMessageBox.about(pt1, 'Erro',
-                                        'Por favor não use caractéres especiais para registrar a CNH!')
-            return
-
-    for j in caracteres:
-        if j in nasc_novo:
-            QtWidgets.QMessageBox.about(pt1, 'Erro',
-                                        'Por favor não use caractéres especiais para registrar a data de nascimento!')
-            return
-
-    for j in caracteres:
-        if j in tel_novo:
-            QtWidgets.QMessageBox.about(pt1, 'Erro',
-                                        'Por favor não use caractéres especiais para registrar o telefone!')
-            return
-
+    # Validações para caracteres especiais
+    for campo, valor in valores_novos.items():
+        for caractere in caracteres:
+            if caractere in valor:
+                QtWidgets.QMessageBox.about(pt1, 'Erro', f"Por favor não use caractéres especiais para registrar {campo}!")
+                return
+    
+    # Atualização no banco de dados
     try:
         cursor = banco.cursor()
-        cursor.execute("UPDATE cliente SET nome_cliente=?, cnh_cliente=?, nasc_cliente=?, tel_cliente=?, end_cliente=? WHERE nome_cliente=? AND cnh_cliente=? AND tel_cliente=? AND end_cliente=?",
-        (nome_novo, cnh_novo, nasc_novo, tel_novo, end_novo, nome, cnh, tel, end,))
+        cursor.execute(
+            """
+            UPDATE cliente 
+            SET nome_cliente=?, cnh_cliente=?, nasc_cliente=?, tel_cliente=?, end_cliente=? 
+            WHERE nome_cliente=? AND cnh_cliente=? AND tel_cliente=? AND end_cliente=?
+            """,
+            (valores_novos["nome"], valores_novos["cnh"], valores_novos["nasc"], valores_novos["tel"], valores_novos["end"],
+             valores_antigos["nome"], valores_antigos["cnh"], valores_antigos["tel"], valores_antigos["end"])
+        )
         banco.commit()
         pt15.label.setText("Usuário atualizado com sucesso")
-        pt15.clientes_name_2.setText("")
-        pt15.clientes_name_2.setPlaceholderText("")
-        pt15.clientes_cnh_2.setText("")
-        pt15.clientes_cnh_2.setPlaceholderText("")
-        #pt15.clientes_nasc_2.setText("01/01/2000")
-        pt15.clientes_tel_2.setText("")
-        pt15.clientes_tel_2.setPlaceholderText("")
-        pt15.clientes_end_2.setText("")
-        pt15.clientes_end_2.setPlaceholderText("")
-    except:
-        print("Erro ao inserir os dados: ")
+        
+        # Limpa os campos
+        for campo in campos.values():
+            campo.setText("")
+            campo.setPlaceholderText("")
+    
+    except Exception as e:
+        print(f"Erro ao inserir os dados: {e}")
+
 
 def editar_funcionario():
     caracteres = "!@#$%¨&*()-=+[]"
