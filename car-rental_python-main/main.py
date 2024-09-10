@@ -433,8 +433,10 @@ def editar_cliente():
         banco.commit()
         pt15.label.setText("Usuário atualizado com sucesso")
         limpar_campos_cliente()
-    except:
-        print("Erro ao inserir os dados")
+    except sqlite3.DatabaseError as e:
+        print(f"Erro no banco de dados: {e}")
+    except Exception as e:
+        print(f"Erro inesperado: {e}")
 
 def editar_funcionario():
     nome = pt14.funci_name_2.placeholderText()
