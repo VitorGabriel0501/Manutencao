@@ -463,8 +463,12 @@ def editar_funcionario():
             banco.commit()
             pt14.label.setText("Funcionário atualizado com sucesso")
             limpar_campos_funcionario()
-        except:
-            print("Erro ao inserir os dados")
+        except sqlite3.DatabaseError as e:
+            print(f"Erro no banco de dados ao deletar funcionário: {e}")
+        except AttributeError as e:
+            print(f"Erro ao acessar os dados da tabela: {e}")
+        except Exception as e:
+            print(f"Erro inesperado: {e}")
     else:
         pt14.label.setText("As duas senhas não coincidem")
     
